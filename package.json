@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "postinstall": "node-gyp configure && bear -- node-gyp rebuild",
+    "build": "node-gyp build"
+  }
+}
