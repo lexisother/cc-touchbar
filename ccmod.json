@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "title": "CCTouchBar",
   "description": "yes.",
-  "poststart": "hello.js",
+  "plugin": "plugin.js",
   "dependencies": {}
 }
