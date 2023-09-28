@@ -16,7 +16,9 @@
         ]
       },
 
-      "sources": [ "hello.mm" ],
+      "sources": [
+        "src/hello.mm",
+      ],
     }
   ],
 }
