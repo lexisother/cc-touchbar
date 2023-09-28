@@ -2,8 +2,6 @@
 #include <Cocoa/Cocoa.h>
 #include <node.h>
 
-namespace cctouchbar {
-
 using v8::Exception;
 using v8::FunctionCallbackInfo;
 using v8::Isolate;
@@ -34,7 +32,7 @@ void SetTouchbar(const FunctionCallbackInfo<Value> &args) {
   // Get our touch bar instance
   NSTouchBar *touchBar = [g_TouchBarDelegate makeTouchBar];
 
-  NSLog(@"Operating on window: %@", window.title);
+  NSLog(@"[CCTouchBar] Operating on window: %@", window.title);
 
   // Set the window's touchbar to our custom touchbar
   [window setTouchBar:touchBar];
@@ -42,18 +40,16 @@ void SetTouchbar(const FunctionCallbackInfo<Value> &args) {
 
 void Method(const FunctionCallbackInfo<Value> &args) {
   Isolate *isolate = args.GetIsolate();
-
-  NSLog(@"fucking fuck");
-
   args.GetReturnValue().Set(
       String::NewFromUtf8(isolate, "world").ToLocalChecked());
 }
 
 void Initialize(Local<Object> exports) {
+  NSLog(@"[CCTouchBar] Initializing");
+
+  NSLog(@"[CCTouchBar] Registering module exports");
   NODE_SET_METHOD(exports, "hello", Method);
   NODE_SET_METHOD(exports, "setTouchbar", SetTouchbar);
 }
 
 NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)
-
-} // namespace cctouchbar
