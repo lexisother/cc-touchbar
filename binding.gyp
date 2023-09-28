@@ -2,16 +2,21 @@
   "targets": [
     {
       "target_name": "addon",
-      "sources": [ 'hello.mm' ],
+
+      "cflags_cc!": [
+        "-fno-rtti",
+        "-fno-exceptions"
+      ],
+
+      "xcode_settings": {
+        "GCC_ENABLE_CPP_RTTI": "YES",
+        "GCC_ENABLE_CPP_EXCEPTIONS": "YES",
+        "OTHER_CFLAGS": [
+            "-ObjC++"
+        ]
+      },
+
+      "sources": [ "hello.mm" ],
     }
   ],
-  'conditions': [
-    ['OS=="mac"', {
-        'xcode_settings': {
-            'OTHER_CFLAGS': [
-                '-ObjC++'
-            ]
-        }
-    }]
-  ]
 }

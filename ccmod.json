@@ -1,7 +1,7 @@
 {
-  "id": "nodeapi",
+  "id": "cc-touchbar",
   "version": "1.0.0",
-  "title": "NodeAPI test",
+  "title": "CCTouchBar",
   "description": "yes.",
   "poststart": "hello.js",
   "dependencies": {}
