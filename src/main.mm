@@ -10,6 +10,17 @@ using v8::Object;
 using v8::String;
 using v8::Value;
 
+NSWindow *GetWindow(Isolate *isolate) {
+  NSWindow *window = [NSApplication sharedApplication].windows[0];
+  if (!window) {
+    isolate->ThrowException(Exception::ReferenceError(
+        String::NewFromUtf8(isolate, "No window found. Aborting.")
+            .ToLocalChecked()));
+    throw "no window";
+  }
+  return window;
+}
+
 CCTouchBarDelegate *g_TouchBarDelegate = NULL;
 void SetTouchbar(const FunctionCallbackInfo<Value> &args) {
   Isolate *isolate = args.GetIsolate();
@@ -20,12 +31,10 @@ void SetTouchbar(const FunctionCallbackInfo<Value> &args) {
         .automaticCustomizeTouchBarMenuItemEnabled = YES;
   }
 
-  // Get our main window
-  NSWindow *window = [NSApplication sharedApplication].windows[0];
-  if (!window) {
-    isolate->ThrowException(Exception::ReferenceError(
-        String::NewFromUtf8(isolate, "No window found. Aborting.")
-            .ToLocalChecked()));
+  NSWindow *window;
+  try {
+    window = GetWindow(isolate);
+  } catch (char const *e) {
     return;
   }
 
