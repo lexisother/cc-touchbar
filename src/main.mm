@@ -47,6 +47,37 @@ void SetTouchbar(const FunctionCallbackInfo<Value> &args) {
   [window setTouchBar:touchBar];
 }
 
+void SetButtonLabel(const FunctionCallbackInfo<Value> &args) {
+  // Setup
+  Isolate *isolate = args.GetIsolate();
+  String::Utf8Value s(isolate, args[0]);
+  std::string str(*s);
+
+  NSLog(@"[CCTouchBar#SetButtonLabel] Received: %s", str.c_str());
+
+  NSWindow *window;
+  try {
+    window = GetWindow(isolate);
+  } catch (char const *e) {
+    return;
+  }
+
+  // Lord forgive what I'm about to do.
+  NSTouchBar *touchBar = window.touchBar;
+  NSTouchBarItem *item = [touchBar itemForIdentifier:@"dev.alyxia.cctouchbar"];
+  NSButton *button = item.view;
+  NSLog(@"[CCTouchBar#SetButtonLabel] Current button title: %@", button.title);
+  NSString *label = [NSString stringWithFormat:@"%s", str.c_str()];
+  NSLog(@"[CCTouchBar#SetButtonLabel] Converted to NSString: %@", label);
+  button.title = label;
+  [button setTitle:label];
+  NSLog(@"[CCTouchBar#SetButtonLabel] After set button title: %@",
+        button.title);
+
+  // <https://developer.apple.com/documentation/appkit/nsview/1483360-needsdisplay/>
+  button.needsDisplay = true;
+}
+
 void Method(const FunctionCallbackInfo<Value> &args) {
   Isolate *isolate = args.GetIsolate();
   args.GetReturnValue().Set(
@@ -59,6 +90,7 @@ void Initialize(Local<Object> exports) {
   NSLog(@"[CCTouchBar] Registering module exports");
   NODE_SET_METHOD(exports, "hello", Method);
   NODE_SET_METHOD(exports, "setTouchbar", SetTouchbar);
+  NODE_SET_METHOD(exports, "setButtonLabel", SetButtonLabel);
 }
 
 NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)
