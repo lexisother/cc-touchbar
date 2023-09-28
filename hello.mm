@@ -53,6 +53,7 @@ static NSString *touchBarItemId = @"dev.alyxia.cctouchbar";
 
 namespace cctouchbar {
 
+using v8::Exception;
 using v8::FunctionCallbackInfo;
 using v8::Isolate;
 using v8::Local;
@@ -62,27 +63,30 @@ using v8::Value;
 
 CCTouchBarDelegate *g_TouchBarDelegate = NULL;
 void SetTouchbar(const FunctionCallbackInfo<Value> &args) {
+  Isolate *isolate = args.GetIsolate();
+
   if (!g_TouchBarDelegate) {
     g_TouchBarDelegate = [[CCTouchBarDelegate alloc] init];
     [NSApplication sharedApplication]
         .automaticCustomizeTouchBarMenuItemEnabled = YES;
   }
 
+  // Get our main window
+  NSWindow *window = [NSApplication sharedApplication].windows[0];
+  if (!window) {
+    isolate->ThrowException(Exception::ReferenceError(
+        String::NewFromUtf8(isolate, "No window found. Aborting.")
+            .ToLocalChecked()));
+    return;
+  }
+
   // Get our touch bar instance
   NSTouchBar *touchBar = [g_TouchBarDelegate makeTouchBar];
 
-  // Get the windows associated with this process, which should only be one at
-  // the time of running
-  NSArray<NSWindow *> *windows = [NSApplication sharedApplication].windows;
-  for (int i = 0; i < windows.count; ++i) {
-    NSWindow *wnd = windows[i];
+  NSLog(@"Operating on window: %@", window.title);
 
-    NSLog(@"before loop title %d log", i);
-    NSLog(@"loop title %d: %@", i, wnd.title);
-    NSLog(@"after loop title %d log", i);
-
-    [wnd setTouchBar:touchBar];
-  }
+  // Set the window's touchbar to our custom touchbar
+  [window setTouchBar:touchBar];
 }
 
 void Method(const FunctionCallbackInfo<Value> &args) {
