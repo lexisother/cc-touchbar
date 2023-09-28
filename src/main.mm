@@ -53,8 +53,6 @@ void SetButtonLabel(const FunctionCallbackInfo<Value> &args) {
   String::Utf8Value s(isolate, args[0]);
   std::string str(*s);
 
-  NSLog(@"[CCTouchBar#SetButtonLabel] Received: %s", str.c_str());
-
   NSWindow *window;
   try {
     window = GetWindow(isolate);
@@ -62,18 +60,14 @@ void SetButtonLabel(const FunctionCallbackInfo<Value> &args) {
     return;
   }
 
-  // Lord forgive what I'm about to do.
-  NSTouchBar *touchBar = window.touchBar;
-  NSTouchBarItem *item = [touchBar itemForIdentifier:@"dev.alyxia.cctouchbar"];
-  NSButton *button = item.view;
-  NSLog(@"[CCTouchBar#SetButtonLabel] Current button title: %@", button.title);
+  // Get our button instance and change its label.
+  NSButton *button =
+      [window.touchBar itemForIdentifier:@"dev.alyxia.cctouchbar"].view;
   NSString *label = [NSString stringWithFormat:@"%s", str.c_str()];
-  NSLog(@"[CCTouchBar#SetButtonLabel] Converted to NSString: %@", label);
+  NSLog(@"[CCTouchBar#SetButtonLabel] '%@' -> '%@'", button.title, label);
   button.title = label;
-  [button setTitle:label];
-  NSLog(@"[CCTouchBar#SetButtonLabel] After set button title: %@",
-        button.title);
 
+  // Mark the button as requiring a redraw.
   // <https://developer.apple.com/documentation/appkit/nsview/1483360-needsdisplay/>
   button.needsDisplay = true;
 }
