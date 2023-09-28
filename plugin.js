@@ -1,6 +1,9 @@
-export default class CCTouchbar {
+export default class CCTouchBar {
   constructor(mod) {
-    const addon = (this.addon = require(`${mod.baseDirectory}build/Release/addon.node`));
+    const addon =
+      (window.CCTouchBarNative =
+      this.addon =
+        require(`${mod.baseDirectory}build/Release/addon.node`));
 
     console.log(addon.hello());
     addon.setTouchbar();
