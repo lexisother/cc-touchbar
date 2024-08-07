@@ -27,8 +27,22 @@ void SetTouchbar(const FunctionCallbackInfo<Value> &args) {
 
   if (!g_TouchBarDelegate) {
     g_TouchBarDelegate = [[CCTouchBarDelegate alloc] init];
-    [NSApplication sharedApplication]
-        .automaticCustomizeTouchBarMenuItemEnabled = YES;
+
+    /* NOTE: After getting the mod running on NodeJS v22.2.0 under macOS Sonoma
+       14.5, this line of code is causing the following error:
+        Terminating app due to uncaught exception
+        'NSInternalInconsistencyException', reason: 'API misuse: modification of
+        a menu's items on a non-main thread when the menu is part of the main
+        menu. Main menu contents may only be modified from the main thread.'
+      
+      Commenting it fixes it. Reading the docs about this property makes me
+      wonder why this was even set to YES in the first place.
+
+      To read about this property, see:
+      <https://developer.apple.com/documentation/appkit/nsapplication/2646923-automaticcustomizetouchbarmenuit/>
+    */
+    // [NSApplication sharedApplication]
+    //     .automaticCustomizeTouchBarMenuItemEnabled = YES;
   }
 
   NSWindow *window;
